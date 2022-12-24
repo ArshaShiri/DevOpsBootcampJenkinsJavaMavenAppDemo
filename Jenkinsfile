@@ -1,44 +1,37 @@
-def gv
-
 pipeline {
-    agent any
-
-    tools {
-        // We need this to make the maven command availble in our build.
-        // The name can be retrieved from Dashboard->Manage Jenkins->Credentials
-        maven 'maven-3.8.6'
-    }
-
+    agent none
     stages {
-        stage("init") {
-            steps{
-                script {
-                    gv = load "script.groovy"
-                }
-            }
-        }
-        
-        stage("build jar") {
+        // Executing for all the branches.
+        stage('test') {
             steps {
-                script {
-                    gv.buildJar()
-                }
+                echo "Testing the application..."
+                echo "Executing pipeline for the branch $BRANCH_NAME"
             }
         }
 
-        stage("build image") {
-            steps {
-                script {
-                    gv.buildImage()
+        stage('build') {
+            when {
+                expression {
+                    // Running for main branch only.
+                    // Env variable that is for multibranch pipelines.
+                    BRANCH_NAME == 'main'
                 }
+            }
+            steps {
+                echo "Building the application..."
             }
         }
 
-        stage("deploy") {
-            steps {
-                script {
-                    gv.deployApp()
+        stage('deploy') {
+            when {
+                expression {
+                    // Running for main branch only.
+                    // Env variable that is for multibranch pipelines.
+                    BRANCH_NAME == 'main'
                 }
+            }
+            steps {
+                echo "Deploying the application..."
             }
         }
     }
