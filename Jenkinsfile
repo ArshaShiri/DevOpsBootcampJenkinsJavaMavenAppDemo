@@ -1,50 +1,37 @@
-def gv
+agent any
 
-pipeline {
-    agent any
-    parameters {
-        choice(name: 'VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: 'version to deploy on')
-        booleanParam(name: 'executeTests', defaultValue: true, description:'')
+tools {
+    // We need this to make the maven command availble in our build.
+    maven 'Maven'
+}
+
+stages {
+    stage("build jar") {
+        steps {
+            script {
+                echo "Building the application..."
+                sh 'mvn package'
+            }
+        }
     }
 
-    stages {
-        // Import groovy script.
-        stage("init") {
-            steps{
-                script {
-                    gv = load "script.groovy"
+    stage("build image") {
+        steps {
+            script {
+                echo "Building the docekr image..."
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: "'USER")]) {
+                    sh 'docker build -t arshashiri/demo-app:jma-2.0 .'
+                    sh "echo $PASS | docker login -u $USER --password-stdin"
+                    sh 'docker push arshashiri/demo-app:jma-2.0'
                 }
             }
         }
+    }
 
-        stage("build") {
-            steps{
-                script {
-                    gv.buildApp()
-                }
-            }
-        }
-
-        stage("test") {
-            when {
-                expression {
-                    params.executeTests
-                }
-            }
-            steps{
-                script {
-                    gv.testApp()
-                }
-            }
-        }
-
-        stage("deploy") {
-            steps{
-                script {
-                    env.ENV = input message: "Select the environment to deploy to", ok: "Environment selected", parameters: [choice(name: 'ENVONE', choices: ['dev', 'staging', 'production'], description: 'environment to deploy on')]
-                    gv.deployApp()
-                    echo "Deploying to ${ENV}"
-                }
+    stage("deploy") {
+        steps {
+            script {
+                echo "Deploying the application..."
             }
         }
     }
