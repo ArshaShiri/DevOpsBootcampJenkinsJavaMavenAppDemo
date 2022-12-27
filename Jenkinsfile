@@ -1,3 +1,4 @@
+@Library('jenkins-shared-library')
 def gv
 
 pipeline {
@@ -21,7 +22,8 @@ pipeline {
         stage("build jar") {
             steps {
                 script {
-                    gv.buildJar()
+                    // The same name as the function in Shared Library repository (DevOpsBootcampJenkinsSharedLibraryDemo/vars/buildJar.groovy)
+                    buildJar()
                 }
             }
         }
@@ -29,7 +31,7 @@ pipeline {
         stage("build image") {
             steps {
                 script {
-                    gv.buildImage()
+                    buildImage()
                 }
             }
         }
