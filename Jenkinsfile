@@ -32,7 +32,7 @@ pipeline {
             steps {
                 script {
                     buildImage("arshashiri/demo-app:jma-3.0")
-                    dockerlogin()
+                    dockerLogin()
                     dockerPush("arshashiri/demo-app:jma-3.0")
                 }
             }
