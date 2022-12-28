@@ -5,7 +5,7 @@ pipeline {
         stage('test') {
             steps {
                 echo "Testing the application..."
-                echo "Executing pipeline for the branch $BRANCH_NAME"
+                echo "Executing pipeline for the branch ${env.BRANCH_NAME}"
             }
         }
 
@@ -14,7 +14,7 @@ pipeline {
                 expression {
                     // Running for main branch only.
                     // Env variable that is for multibranch pipelines.
-                    BRANCH_NAME == 'main'
+                    env.BRANCH_NAME == 'main'
                 }
             }
             steps {
@@ -27,7 +27,7 @@ pipeline {
                 expression {
                     // Running for main branch only.
                     // Env variable that is for multibranch pipelines.
-                    BRANCH_NAME == 'main'
+                    env.BRANCH_NAME == 'main'
                 }
             }
             steps {
