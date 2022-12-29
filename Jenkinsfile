@@ -4,7 +4,7 @@ pipeline {
         // Executing for all the branches.
         stage('build app') {
             steps {
-                sccript {
+                script {
                     echo "Building the application..."
                     sh 'mvn package'
 
