@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        maven 'maven-3.8.6'
+    }
     stages {
         // Executing for all the branches.
         stage('build app') {
