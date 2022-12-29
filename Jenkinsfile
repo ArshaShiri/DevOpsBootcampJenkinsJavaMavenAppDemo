@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
     stages {
         // Executing for all the branches.
         stage('build app') {
