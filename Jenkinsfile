@@ -2,36 +2,34 @@ pipeline {
     agent none
     stages {
         // Executing for all the branches.
-        stage('test') {
+        stage('build app') {
             steps {
-                echo "Testing the application..."
-                echo "Executing pipeline for the branch ${env.BRANCH_NAME}"
+                sccript {
+                    echo "Building the application..."
+                    sh 'mvn package'
+
+                }
             }
         }
 
-        stage('build') {
-            when {
-                expression {
-                    // Running for main branch only.
-                    // Env variable that is for multibranch pipelines.
-                    env.BRANCH_NAME == 'main'
-                }
-            }
+        stage('build image') {
             steps {
-                echo "Building the application..."
+                script {
+                    echo "Building the docekr image..."
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                        sh 'docker build -t arshashiri/demo-app:jma-2.0 .'
+                        sh "echo $PASS | docker login -u $USER --password-stdin"
+                        sh 'docker push arshashiri/demo-app:jma-2.0'
+                    }
+                }
             }
         }
 
         stage('deploy') {
-            when {
-                expression {
-                    // Running for main branch only.
-                    // Env variable that is for multibranch pipelines.
-                    env.BRANCH_NAME == 'main'
-                }
-            }
             steps {
-                echo "Deploying the application..."
+                sccript {
+                    echo 'deploying the application...'
+                }
             }
         }
     }
