@@ -58,8 +58,8 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'gitlab-credentials', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                         // We can also direcly do the configuration step in the jenkins server.
-                        sh 'git config --gloabl user.email "jenkins@example.com"'
-                        sh 'git config --gloabl user.name "jenkins"'
+                        sh 'git config --global user.email "jenkins@example.com"'
+                        sh 'git config --global user.name "jenkins"'
 
                         sh 'git status'
                         sh 'git status'
