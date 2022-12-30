@@ -52,5 +52,27 @@ pipeline {
                 }
             }
         }
+
+        stage ('commit version update') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'gitlab-credentials', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                        // We can also direcly do the configuration step in the jenkins server.
+                        sh 'git config --gloabl user.email "jenkins@example.com"'
+                        sh 'git config --gloabl user.name "jenkins"'
+
+                        sh 'git status'
+                        sh 'git status'
+                        sh 'git config --list'
+
+                        // Set the remote url.
+                        sh "git remote set-url origin https://${USER}:${PASS}@git@github.com:ArshaShiri/DevOpsBootcampJenkinsJavaMavenAppDemo.git"
+                        sh "git add ."
+                        sh "git commit -m "ci: version bump""
+                        sh "git push origin HEAD:jenkins-jobs"
+                    }
+                }
+            }
+        }
     }
 }
