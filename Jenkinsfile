@@ -53,6 +53,8 @@ pipeline {
             }
         }
 
+        // This can be tricky if automatic build after a commit is activated on Jenkins.
+        // We can end up in an infinite loop of commits and pipeline triggers.
         stage ('commit version update') {
             steps {
                 script {
