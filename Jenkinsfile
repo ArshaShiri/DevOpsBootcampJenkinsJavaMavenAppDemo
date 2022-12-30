@@ -62,10 +62,13 @@ pipeline {
                         sh 'git config --global user.name "jenkins"'
 
                         sh 'git status'
-                        sh 'git status'
+
+                        // Jenkins checks out a commit not a branch, that is why we cannot just simply git push. We have to specify the origin.
+                        sh 'git branch'
                         sh 'git config --list'
 
                         // Set the remote url.
+                        // This does not work as git removed the user password loging support. The ssh of the server needs to be added to be able to connect to github.
                         sh "git remote set-url origin https://${USER}:${PASS}@github.com/ArshaShiri/DevOpsBootcampJenkinsJavaMavenAppDemo.git"
                         sh 'git add .'
                         sh 'git commit -m "ci: version bump"'
