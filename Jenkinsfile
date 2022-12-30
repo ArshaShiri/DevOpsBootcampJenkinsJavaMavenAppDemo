@@ -11,7 +11,7 @@ pipeline {
 
                     // This command will update the version in pom.xml
                     sh 'mvn build-helper:parse-version versions: set \
-                    -DnewVersion=\\\S{parsedVersion.majorVersion}.\\\S{parsedVersion.minorVersion}.\\\S{parsedVersion.nextIncrementalVersion} \
+                    -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
                     versions:commit'
 
                     // Matcher will contain an array of matched text
@@ -37,9 +37,9 @@ pipeline {
                 script {
                     echo "Building the docekr image..."
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                        sh "docker build -t arshashiri/demo-app:$IMAGE_NAME ."
+                        sh "docker build -t arshashiri/demo-app:${IMAGE_NAME} ."
                         sh "echo $PASS | docker login -u $USER --password-stdin"
-                        sh "docker push arshashiri/demo-app:$IMAGE_NAME"
+                        sh "docker push arshashiri/demo-app:${IMAGE_NAME}"
                     }
                 }
             }
