@@ -16,6 +16,10 @@ pipeline {
         maven 'maven-3.8.6'
     }
 
+    environment {
+        IMAGE_NAME = 'arshashiri/demo-app:java-maven-2.0'
+    }
+
     stages {
         stage("init") {
             steps{
@@ -37,9 +41,10 @@ pipeline {
         stage("build image") {
             steps {
                 script {
-                    buildImage("arshashiri/demo-app:jma-3.0")
+                    echo 'building docker image...'
+                    buildImage(env.IMAGE_NAME)
                     dockerLogin()
-                    dockerPush("arshashiri/demo-app:jma-3.0")
+                    dockerPush(env.IMAGE_NAME)
                 }
             }
         }
@@ -47,7 +52,13 @@ pipeline {
         stage("deploy") {
             steps {
                 script {
-                    gv.deployApp()
+                   echo 'deploying docker image to EC2...'
+
+                    def dockerCmd = 'docker run -p 3080:3080 -d arshashiri/demo-app:node-app-1.0'
+                    sshagent(['ec2-server-key']) {
+                        // Connect to the ec2 server and run the docker container.
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@3.71.176.75 ${dockerCmd}"
+                    }
                 }
             }
         }
