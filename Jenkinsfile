@@ -56,7 +56,7 @@ pipeline {
                     def dockerCmd = "docker-compose -f docker-compose.yaml up --detach"
 
                     sshagent(['ec2-server-key']) {
-                        sh "scp docker-compose.yaml ec2-user@3.71.176.75:home/ec2-user"
+                        sh "scp docker-compose.yaml ec2-user@3.71.176.75:/home/ec2-user"
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@3.71.176.75 ${dockerCmd}"
                     }
             }
