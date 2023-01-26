@@ -16,9 +16,23 @@ pipeline {
         maven 'maven-3.8.6'
     }
 
-    environment {
-        IMAGE_NAME = 'arshashiri/demo-app:java-maven-2.0'
-    }
+        stage('increment version') {
+            steps {
+                script {
+                    echo "incrementing app version..."
+
+                    // This command will update the version in pom.xml
+                    sh 'mvn build-helper:parse-version versions:set \
+                        -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
+                        versions:commit'
+
+                    // Matcher will contain an array of matched text
+                    def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
+                    def version = matcher[0][1]
+                    env.IMAGE_NAME = "$version-$BUILD_NUMBER"
+                }
+            }
+        }
 
     stages {
         stage("init") {
